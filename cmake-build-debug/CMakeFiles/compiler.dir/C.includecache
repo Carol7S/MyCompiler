@@ -6,15 +6,13 @@
 
 #IncludeRegexTransform: 
 
-H:/code/code/c/clion/compiler/TAC.c
-global.h
-H:/code/code/c/clion/compiler/global.h
-TAC.h
-H:/code/code/c/clion/compiler/TAC.h
-
 H:/code/code/c/clion/compiler/TAC.h
 parse.h
 H:/code/code/c/clion/compiler/parse.h
+
+H:/code/code/c/clion/compiler/asm.h
+TAC.h
+H:/code/code/c/clion/compiler/TAC.h
 
 H:/code/code/c/clion/compiler/global.h
 stdio.h
@@ -23,6 +21,22 @@ stdlib.h
 -
 string.h
 -
+
+H:/code/code/c/clion/compiler/main.c
+scan.h
+H:/code/code/c/clion/compiler/scan.h
+parse.h
+H:/code/code/c/clion/compiler/parse.h
+TAC.h
+H:/code/code/c/clion/compiler/TAC.h
+optimize_TAC.h
+H:/code/code/c/clion/compiler/optimize_TAC.h
+asm.h
+H:/code/code/c/clion/compiler/asm.h
+
+H:/code/code/c/clion/compiler/optimize_TAC.h
+TAC.h
+H:/code/code/c/clion/compiler/TAC.h
 
 H:/code/code/c/clion/compiler/parse.h
 scan.h

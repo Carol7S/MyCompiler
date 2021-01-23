@@ -53,7 +53,7 @@ static int transform_table[16][13]={{0,0,0,0,0,0,0,0,0,0,0,0,0},    ///-1 为出
  **********************************************************/
 void scan(){
     FILE *text;
-    text= fopen("test\\test1.c", "r");/**读取测试文件**/
+    text= fopen("test\\test2.c", "r");/**读取测试文件**/
     if(text!=NULL)
     {
         while(!feof(text))                                  /**文件直到循环中读到文件尾feof(fp)有两个返回值:如果遇到文件结束，函数feof（fp）的值为1，否则为0。**/

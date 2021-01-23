@@ -38,10 +38,8 @@ void  tac()
 
 void start_tac(treenode* lnode)
 {
-    printf("123\n");
     while(lnode!=NULL)
     {
-        printf("321\n");
         if(lnode->nodekind==stmtk) ///是语句节点(比如：if while main  等等)
         {
             if(lnode->kind.stmt==maink)
@@ -439,7 +437,7 @@ char* deal_expk(treenode *lnode)///专门处理expk的式子
 
                 if(lnode->child[1]->kind.exp==constk)
                 {
-                    char c[10];
+                    static char c[10];
                     sprintf(c,"%d",lnode->child[1]->attr.val);
                     if((lnode->attr.op==PLUS||lnode->attr.op==MINUS)&&strcmp(c,"1")==0)
                     {
@@ -569,12 +567,11 @@ char* deal_expk(treenode *lnode)///专门处理expk的式子
             }
             case idk:  ///如果为变量
             {
-
                 return lnode->attr.name;
             }
             case funck:///函数调用
             {
-                char t5[10],t6[10],a[10];
+                static char t5[10],t6[10],a[10];
                 if(lnode->child[1]!=NULL)
                 {
                     sprintf(a,"%d",count_para(lnode->child[1]));
@@ -603,7 +600,7 @@ char* deal_expk(treenode *lnode)///专门处理expk的式子
                 }
                 get_tac(callfuns,lnode->child[0]->attr.name,empty,empty);
 
-                char t7[10];
+                static char t7[10];
                 get_tac(funreturns,lnode->child[0]->attr.name,empty,empty);
                 strcpy(t7,newtemp());
                 return t7;
