@@ -14,6 +14,7 @@ static void IF_K(treenode *lnode);          ///处理if结点
 static void WHILE_K(treenode *lnode);       ///处理while结点
 static void FOR_K(treenode *lnode);         ///处理for结点
 static void FUNC_K(treenode *lnode);        ///处理函数调用结点
+int count_para(treenode *lnode);
 static void get_tac(opkinds op,char a[],char b[],char c[]); ///产生四元式
 void print_tac();
 static char * newlabel();     ///申请跳转label

@@ -3,7 +3,6 @@
 //
 #include"global.h"
 #include"optimize_TAC.h"
-void start_optimize();
 void optimer_tac();
 void print_optimize_tac();
 

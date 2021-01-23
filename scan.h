@@ -22,4 +22,6 @@ typedef struct
     char stringval[100];        /**token的值 数字,字母,关键字等会有值，其他像 ( { ; 都没有值***/
     double numval;              /**值先设为double，有可能为浮点数**/
 }tokenrecord;
+
+void scan();
 #endif //COMPILER_SCAN_H

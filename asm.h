@@ -6,4 +6,6 @@
 #define COMPILER_ASM_H
 #include"TAC.h"
 extern fourvarcode* tac_head;
+
+void start_asm();
 #endif //COMPILER_ASM_H

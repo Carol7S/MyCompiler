@@ -1,52 +1,49 @@
-//
-// Created by Carol on 2021/1/23.
-//
 #include "parse.h"
-#include "global.h"
-static treenode * entitypara_list();  ///ç”¨äºè‡ªå®šä¹‰å‡½æ•°çš„å‚æ•°
-static treenode * BUER_stmt();        ///å¸ƒå°”è¿ç®—è¯­å¥
-static treenode * newlnodestmt(Stmtkind stmt); ///ç”³è¯·è¯­å¥ç»“æ„ç»“ç‚¹
-static treenode * newlnodeexp(Expkind exp);    ///ç”³è¯·ç®—å¼ç»“æ„ç»“ç‚¹
-static treenode * term();                      ///å¸¦ä¹˜é™¤çš„ç®—æœ¯å¼
-static treenode * factor();                    ///ä¸»è¦å¯¹äºåŠ å‡å·²ç»æ›´ä½ç­‰çº§æ¨¡å—
-static treenode * structure_stmt();             ///ä¸€ä¸ªä»£ç å—{}
-static treenode * instmt_sequence();            ///è¯­å¥ç»“æ„é›†åˆ
-static treenode * for_stmt();                   ///forè¯­å¥
-static treenode * while_stmt();                 ///whileè¯­å¥
-static treenode * if_stmt();                    ///ifè¯­å¥
-static treenode * switch_stmt();                ///switchè¯­å¥
-static treenode * case_stmt();                  ///caseè¯­å¥
-static treenode * break_stmt();                 ///breakè¯­å¥
-static treenode * default_stmt();               ///defaultè¯­å¥
-static treenode * statement();                  ///åŸºæœ¬è¯­å¥
-static treenode * definepara_stmt();            ///å®šä¹‰å‚æ•°
-static treenode * quotepara_list();             ///å‡½æ•°è°ƒç”¨çš„å‚æ•°
-static treenode * exp2();                       ///å››åˆ™è¿ç®—
-static treenode * fun_apply();                  ///å‡½æ•°è°ƒç”¨
-static treenode * assign_stmt();                ///èµ‹å€¼è¯­å¥
-static treenode * define_assign();              ///å®šä¹‰è¯­å¥
-static treenode * exp();                        ///å››åˆ™è¿ç®—çš„æ›´ä½æ¨¡å—
-static treenode * simple_exp();                 ///æ›´ç®€å•çš„è¿ç®—æ¨¡å—
-static treenode * input_para_list();            ///è¾“å…¥çš„å‚æ•°
-static treenode * struct_stmt();                ///ç»“æ„ä½“è¯­å¥
-int isin_first_instmt_sequence();               ///tokenæ˜¯å¦åœ¨è¯­å¥åºåˆ—ä¸­
-void parse_printtree();                         ///è¾“å‡ºæŠ½è±¡è¯­æ³•æ ‘
+
+static treenode * entitypara_list();  ///ÓÃÓÚ×Ô¶¨Òåº¯ÊıµÄ²ÎÊı
+static treenode * BUER_stmt();        ///²¼¶ûÔËËãÓï¾ä
+static treenode * newlnodestmt(Stmtkind stmt); ///ÉêÇëÓï¾ä½á¹¹½áµã
+static treenode * newlnodeexp(Expkind exp);    ///ÉêÇëËãÊ½½á¹¹½áµã
+static treenode * term();                      ///´ø³Ë³ıµÄËãÊõÊ½
+static treenode * factor();                    ///Ö÷Òª¶ÔÓÚ¼Ó¼õÒÑ¾­¸üµÍµÈ¼¶Ä£¿é
+static treenode * structure_stmt();             ///Ò»¸ö´úÂë¿é{}
+static treenode * instmt_sequence();            ///Óï¾ä½á¹¹¼¯ºÏ
+static treenode * for_stmt();                   ///forÓï¾ä
+static treenode * while_stmt();                 ///whileÓï¾ä
+static treenode * if_stmt();                    ///ifÓï¾ä
+static treenode * switch_stmt();                ///switchÓï¾ä
+static treenode * case_stmt();                  ///caseÓï¾ä
+static treenode * break_stmt();                 ///breakÓï¾ä
+static treenode * default_stmt();               ///defaultÓï¾ä
+static treenode * statement();                  ///»ù±¾Óï¾ä
+static treenode * definepara_stmt();            ///¶¨Òå²ÎÊı
+static treenode * quotepara_list();             ///º¯Êıµ÷ÓÃµÄ²ÎÊı
+static treenode * exp2();                       ///ËÄÔòÔËËã
+static treenode * fun_apply();                  ///º¯Êıµ÷ÓÃ
+static treenode * assign_stmt();                ///¸³ÖµÓï¾ä
+static treenode * define_assign();              ///¶¨ÒåÓï¾ä
+static treenode * exp();                        ///ËÄÔòÔËËãµÄ¸üµÍÄ£¿é
+static treenode * simple_exp();                 ///¸ü¼òµ¥µÄÔËËãÄ£¿é
+static treenode * input_para_list();            ///ÊäÈëµÄ²ÎÊı
+static treenode * struct_stmt();                ///½á¹¹ÌåÓï¾ä
+int isin_first_instmt_sequence();               ///tokenÊÇ·ñÔÚÓï¾äĞòÁĞÖĞ
+int array_judge(int p);
+void parse_printtree();                         ///Êä³ö³éÏóÓï·¨Ê÷
 void printtree(treenode *lnode);
 void printnode(treenode *lnode);
-void parse();                                   ///è¯­æ³•åˆ†æå¼€å§‹
-void gettoken();                                ///è·å–token
-void match(tokentype expectedtoken);            ///åŒ¹é…
-int count_row();                                ///è®¡ç®—tokenæ‰€åœ¨è¡Œæ•°ï¼Œä¸»è¦ç”¨ä¸è¯­ä¹‰åˆ†æ
-int isdtype();                                  ///æ˜¯å¦æ˜¯å®šä¹‰ç±»å‹
-int iscomparison_op();                          ///åˆ¤æ–­æ˜¯å¦æ˜¯æ¯”è¾ƒè¿ç®—ç¬¦
+void gettoken();                                ///»ñÈ¡token
+void match(tokentype expectedtoken);            ///Æ¥Åä
+int count_row();                                ///¼ÆËãtokenËùÔÚĞĞÊı£¬Ö÷ÒªÓÃÓëÓïÒå·ÖÎö
+int isdtype();                                  ///ÊÇ·ñÊÇ¶¨ÒåÀàĞÍ
+int iscomparison_op();                          ///ÅĞ¶ÏÊÇ·ñÊÇ±È½ÏÔËËã·û
 
-int mainno=0;/**ç”¨äºåˆ¤æ–­mainå‡½æ•°çš„ä¸ªæ•°**/
-int ptokenno=0;/**å½“å‰è®°å·çš„è®¡æ•°å™¨ã€‚ä»ç¬¬0ä¸ªå¼€å§‹ï¼Œæ€»æ˜¯å¯¹åº”å½“å‰è®°å·çš„å‰ä¸€ä¸ª**/
-int printtree_t=0;/**è¾“å‡ºè¯­æ³•æ ‘çš„å‚æ•°**/
-treenode *tree_gen;/**è¯­æ³•æ ‘çš„æ ¹**/
-tokentype dtype[4]= {INT,FLOAT,CHAR,DOUBLE}; /**å˜é‡æˆ–å‡½æ•°è¿”å›å€¼ï¼ˆé™¤VOIDä»¥å¤–ï¼‰çš„ç±»å‹**/
+int mainno=0;/**ÓÃÓÚÅĞ¶Ïmainº¯ÊıµÄ¸öÊı**/
+int ptokenno=0;/**µ±Ç°¼ÇºÅµÄ¼ÆÊıÆ÷¡£´ÓµÚ0¸ö¿ªÊ¼£¬×ÜÊÇ¶ÔÓ¦µ±Ç°¼ÇºÅµÄÇ°Ò»¸ö**/
+int printtree_t=0;/**Êä³öÓï·¨Ê÷µÄ²ÎÊı**/
+treenode *tree_gen;/**Óï·¨Ê÷µÄ¸ù**/
+tokentype dtype[4]= {INT,FLOAT,CHAR,DOUBLE}; /**±äÁ¿»òº¯Êı·µ»ØÖµ£¨³ıVOIDÒÔÍâ£©µÄÀàĞÍ**/
 
-///åŒ¹é…è¯æ³•ä¸­è¯†åˆ«çš„token,å¹¶å–ä¸‹ä¸€ä¸ªè®°å·
+///Æ¥Åä´Ê·¨ÖĞÊ¶±ğµÄtoken,²¢È¡ÏÂÒ»¸ö¼ÇºÅ
 void match(tokentype expectedtoken)
 {
 
@@ -59,15 +56,14 @@ void match(tokentype expectedtoken)
         printf("error");
     }
 }
-
-/**è·å¾—ç»“ç‚¹**/
+/**»ñµÃ½áµã**/
 void gettoken()
 {
     token=token_table[ptokenno].tokenval;
     ptokenno++;
 }
 
-///è®¡ç®—è®°å·ä½äºæºä»£ç çš„å“ªä¸€è¡Œ
+///¼ÆËã¼ÇºÅÎ»ÓÚÔ´´úÂëµÄÄÄÒ»ĞĞ
 int count_row()
 {
     int i;
@@ -85,22 +81,22 @@ void parse()
     treenode *dakuohao;
     gettoken();
 
-    int root_tag=0;  ///ç”¨äºæ ¹èŠ‚ç‚¹çš„åˆ¤æ–­
+    int root_tag=0;  ///ÓÃÓÚ¸ù½ÚµãµÄÅĞ¶Ï
 
     while(ptokenno<tokenno)
     {
-        if(isdtype() || (token==STRUCT)) // æ˜¯å®šä¹‰çš„ç±»å‹ æˆ–è€… æ˜¯ä¸€ä¸ªç»“æ„ä½“
+        if(isdtype()||(token==STRUCT))
         {
-            if(token==INT && token_table[ptokenno].tokenval == MAIN)    //å¦‚æœæ˜¯int main
+            if(token==INT&&token_table[ptokenno].tokenval == MAIN)
             {
                 root_tag++;
-                newtemp = newlnodestmt(maink);  //  main
+                newtemp = newlnodestmt(maink);
                 match(INT);
                 match(MAIN);
                 match(L_XI);
                 if(token!=R_XI)
                 {
-                    newtemp->child[1]=entitypara_list();  ///å‚æ•°åˆ—è¡¨
+                    newtemp->child[1]=entitypara_list();  ///²ÎÊıÁĞ±í
                 }
                 match(R_XI);
                 if(token!=L_DA)
@@ -109,29 +105,29 @@ void parse()
                 }
                 else
                 {
-                    newtemp->child[2]=structure_stmt();/**å‡½æ•°å®ä½“ç»“æ„**/
+                    newtemp->child[2]=structure_stmt();/**º¯ÊıÊµÌå½á¹¹**/
                 }
                 mainno++;
             }
-            else if(token_table[ptokenno].tokenval==ID && token_table[ptokenno+1].tokenval==L_XI) ///è‡ªå®šä¹‰å‡½æ•°
+            else if(token_table[ptokenno].tokenval==ID&&token_table[ptokenno+1].tokenval==L_XI) ///×Ô¶¨Òåº¯Êı
             {
                 root_tag++;
-                newtemp=newlnodestmt(funck);/// å‡½æ•°  åŠ¨æ€ç”³è¯·ä¸€æ¡è¯­å¥ç»“æ„çš„èŠ‚ç‚¹
+                newtemp=newlnodestmt(funck);///¶¯Ì¬ÉêÇëÒ»ÌõÓï¾ä½á¹¹µÄ½Úµã
                 match(token);
                 treenode *j=newlnodeexp(idk);
                 match(ID);
-                newtemp->child[0]=j; ///è‡ªå®šä¹‰å‡½æ•°å
+                newtemp->child[0]=j; ///×Ô¶¨Òåº¯ÊıÃû
                 match(L_XI);
 
                 if(token!=R_XI)
                 {
-                    newtemp->child[1]=entitypara_list();  ///å‚æ•°åˆ—è¡¨
+                    newtemp->child[1]=entitypara_list();  ///²ÎÊıÁĞ±í
                 }
 
                 match(R_XI);
-                if(token!=FENH && token!=L_DA)
+                if(token!=FENH&&token!=L_DA)
                 {
-                    printf("error missing && function error\n");
+                    printf("error missing&& function error\n");
                 }
 
                 else
@@ -140,10 +136,10 @@ void parse()
                 }
 
             }
-            else if(token==STRUCT && token_table[ptokenno].tokenval==ID && token_table[ptokenno+1].tokenval==L_DA)
-            {//struct Student(
+            else if(token==STRUCT&&token_table[ptokenno].tokenval==ID&&token_table[ptokenno+1].tokenval==L_DA)
+            {
                 root_tag++;
-                newtemp=newlnodestmt(structk);  //  ç»“æ„ä½“
+                newtemp=newlnodestmt(structk);
                 match(token);
                 treenode *j=newlnodeexp(idk);
                 match(ID);
@@ -151,19 +147,19 @@ void parse()
 
                 if(token==L_DA)
                 {
-                    newtemp->child[1]=structure_stmt(); ///è¿™é‡Œä¸ºäº†ç®€åŒ–èµ‹å€¼
+                    newtemp->child[1]=structure_stmt(); ///ÕâÀïÎªÁË¼ò»¯¸³Öµ
                 }
             }
-            else ///å˜é‡å£°æ˜--å…¨å±€  if(token==ID)
+            else ///±äÁ¿ÉùÃ÷--È«¾Ö  if(token==ID)
             {
                 root_tag++;
-                newtemp=newlnodestmt(defineparak);//para å˜é‡
+                newtemp=newlnodestmt(defineparak);
 
                 match(token);
 
                 if(token!=ID)
                 {
-                    printf("å˜é‡å®šä¹‰æœ‰è¯¯\n",count_row());
+                    printf("±äÁ¿¶¨ÒåÓĞÎó\n",count_row());
                 }
 
                 newtemp->child[0]=define_assign();
@@ -176,24 +172,26 @@ void parse()
                     match(token);
             }
 
-            if(temp != NULL)
-                temp->sibling = newtemp;
 
-            temp = newtemp;
 
-            if(root_tag == 1)
-                gen = temp;
+            if(temp!=NULL)
+                temp->sibling=newtemp;
+            temp=newtemp;
+
+            if(root_tag==1)
+                gen=temp;
         }
 
         else
         {
             if(token==ID)
             {
-                printf("æœªå®šä¹‰\n");
+                printf("Î´¶¨Òå\n");
             }
             else
             {
-                printf("éæ³•188\n");
+                printf("·Ç·¨188\n");
+
             }
         }
 
@@ -204,15 +202,17 @@ void parse()
     }
 
     tree_gen=gen;
-    ///æ‰“å°æŠ½è±¡è¯­æ³•æ ‘
+    ///´òÓ¡³éÏóÓï·¨Ê÷
     parse_printtree();
 }
 
-/**ç”³è¯·ä¸€æ¡è¯­å¥ç»“æ„çš„èŠ‚ç‚¹
+
+
+/**ÉêÇëÒ»ÌõÓï¾ä½á¹¹µÄ½Úµã
 if for while return assign fun define main define**/
 treenode *newlnodestmt(Stmtkind stmt)
 {
-    /**ä¸ºæ–°ç»“ç‚¹åˆå§‹åŒ–**/
+    /**ÎªĞÂ½áµã³õÊ¼»¯**/
     treenode *t=(treenode *)malloc(sizeof(treenode));
     t->nodekind=stmtk;
     t->kind.stmt=stmt;
@@ -222,12 +222,12 @@ treenode *newlnodestmt(Stmtkind stmt)
         t->child[i]=NULL;
     t->sibling=NULL;
 
-    if(stmt==maink)/**å¦‚æœæ˜¯ä¸»å‡½æ•°**/
+    if(stmt==maink)/**Èç¹ûÊÇÖ÷º¯Êı**/
     {
         t->dtype=token;
     }
 
-    if(stmt==defineparak) /**å¦‚æœæ˜¯å®šä¹‰**/
+    if(stmt==defineparak) /**Èç¹ûÊÇ¶¨Òå**/
     {
         t->dtype=token;
     }
@@ -240,7 +240,7 @@ treenode *newlnodestmt(Stmtkind stmt)
     return t;
 }
 
-///æœåŠ¡äºè‡ªå®šä¹‰å‡½æ•°çš„å‚æ•°  å½¢å¦‚ fun(int a,int b)
+///·şÎñÓÚ×Ô¶¨Òåº¯ÊıµÄ²ÎÊı  ĞÎÈç fun(int a,int b)
 treenode *entitypara_list()
 {
     treenode *t;
@@ -249,21 +249,21 @@ treenode *entitypara_list()
     treenode *newtemp;
 
     temp=newlnodestmt(defineparak);
-    t=temp; ///å…ˆæŠŠè¿”å›çš„é¦–åœ°å€æ§åˆ¶ä½
+    t=temp; ///ÏÈ°Ñ·µ»ØµÄÊ×µØÖ·¿ØÖÆ×¡
     if(isdtype())
     {
         match(token);
     }
     else
     {
-        printf("error å‡½æ•°å‚æ•°æœ‰è¯¯");
+        printf("error º¯Êı²ÎÊıÓĞÎó");
     }
 
     newtemp=newlnodeexp(idk);
     match(ID);
     temp->child[0]=newtemp;
 
-    while(token==DOUH) /// ä¸æ­¢ä¸€ä¸ªå‚æ•°æ—¶
+    while(token==DOUH) /// ²»Ö¹Ò»¸ö²ÎÊıÊ±
     {
         match(DOUH);
         temp1=newlnodestmt(defineparak);
@@ -280,26 +280,26 @@ treenode *entitypara_list()
         newtemp=newlnodeexp(idk);
         match(ID);
         temp1->child[0]=newtemp;
-        temp->sibling=temp1;  ///å‡ºè¿‡bug æ³¨æ„è¿™é‡ŒæŒ‡é’ˆçš„å˜æ¢
+        temp->sibling=temp1;  ///³ö¹ıbug ×¢ÒâÕâÀïÖ¸ÕëµÄ±ä»»
         temp=temp1;
     }
 
     if(token!=R_XI)
     {
-        printf("error !  æ‹¬å·ä¸åŒ¹é…ï¼ï¼");
+        printf("error !  À¨ºÅ²»Æ¥Åä£¡£¡");
     }
 
     return t;
 }
 
 /**
-*ç”³è¯·ä¸€æ¡ç®—å¼ç»“æ„expkçš„èŠ‚ç‚¹ï¼Œè¯­å¥å†…å®¹çš„ç±»å‹å¦‚ä¸‹
-*opk(+ - * / è¿˜æœ‰ä¸€äº›å…³ç³»æ“ä½œç¬¦),constk,idk
+*ÉêÇëÒ»ÌõËãÊ½½á¹¹expkµÄ½Úµã£¬Óï¾äÄÚÈİµÄÀàĞÍÈçÏÂ
+*opk(+ - * / »¹ÓĞÒ»Ğ©¹ØÏµ²Ù×÷·û),constk,idk
 **/
-///æ“ä½œç¬¦ï¼Œå¸¸é‡ï¼Œæ ‡è¯†ç¬¦ï¼ˆå˜é‡åï¼Œå‡½æ•°åï¼ˆidkï¼‰ï¼‰
+///²Ù×÷·û£¬³£Á¿£¬±êÊ¶·û£¨±äÁ¿Ãû£¬º¯ÊıÃû£¨idk£©£©
 treenode *newlnodeexp(Expkind exp)
 {
-    ///åˆå§‹åŒ–
+    ///³õÊ¼»¯
     treenode *t=(treenode *)malloc(sizeof(treenode));
     t->nodekind=expk;
     t->kind.exp=exp;
@@ -312,27 +312,27 @@ treenode *newlnodeexp(Expkind exp)
 
     t->sibling=NULL;
 
-    ///å¦‚æœä¸ºæ“ä½œç¬¦
+    ///Èç¹ûÎª²Ù×÷·û
     if(exp==opk)
     {
         t->attr.op=token;
     }
 
-    ///å¦‚æœä¸ºå¸¸é‡
+    ///Èç¹ûÎª³£Á¿
     if(exp==constk)
     {
         t->attr.val=token_table[ptokenno-1].numval;
     }
 
 
-    ///å¦‚æœä¸ºå˜é‡åã€æˆ–å‡½æ•°åï¼ˆæ ‡è¯†ç¬¦ï¼‰
+    ///Èç¹ûÎª±äÁ¿Ãû¡¢»òº¯ÊıÃû£¨±êÊ¶·û£©
     if(exp==idk&&token_table[ptokenno].tokenval!=DIAN)
     {
         strcpy(t->attr.name,token_table[ptokenno-1].stringval);
     }
 
 
-    ///åæœŸåŠ è¿›æ¥çš„ ä¸ºstructç±»å‹æœåŠ¡
+    ///ºóÆÚ¼Ó½øÀ´µÄ ÎªstructÀàĞÍ·şÎñ
     if(exp=idk&&token_table[ptokenno].tokenval==DIAN)
     {
         char struct_temp1[100]= {'\0'};
@@ -365,8 +365,8 @@ treenode *newlnodeexp(Expkind exp)
 
 
 /***********************************************************
-* åŠŸèƒ½:ä»¥å¤§æ‹¬å·å¼€å§‹çš„ä¸€ä¸ªå¤§ç»“æ„
-        æ¯”å¦‚ï¼š for if  while  main fun
+* ¹¦ÄÜ:ÒÔ´óÀ¨ºÅ¿ªÊ¼µÄÒ»¸ö´ó½á¹¹
+        ±ÈÈç£º for if  while  main fun
 **********************************************************/
 treenode *structure_stmt()
 {
@@ -375,10 +375,10 @@ treenode *structure_stmt()
     treenode *newtemp;
     int k=0;
     match(L_DA);
-    while(isin_first_instmt_sequence())/**å½“å‰Tokenæ˜¯å¦åœ¨instmt-sequenceçš„å®šä¹‰é›†åˆé‡Œ**/
+    while(isin_first_instmt_sequence())/**µ±Ç°TokenÊÇ·ñÔÚinstmt-sequenceµÄ¶¨Òå¼¯ºÏÀï**/
     {
         k++;
-        newtemp=instmt_sequence();  ///å¼€å§‹å„è‡ªçš„è¯­å¥
+        newtemp=instmt_sequence();  ///¿ªÊ¼¸÷×ÔµÄÓï¾ä
 
         if(temp!=NULL)
         {
@@ -388,13 +388,13 @@ treenode *structure_stmt()
         temp=newtemp;
         if(k==1)
         {
-            t=temp; ///æŠŠå¤´ç»“ç‚¹å›ºå®šä½ ä»¥ä¾¿è¿”å›
+            t=temp; ///°ÑÍ·½áµã¹Ì¶¨×¡ ÒÔ±ã·µ»Ø
         }
     }
     match(R_DA);
     return t;
 }
-///ä¸ºäº†åˆ¤æ–­æ˜¯ä¸æ˜¯è¿™äº›è¯­å¥æ¯”å¦‚ for if while å®šä¹‰ è¿”å›
+///ÎªÁËÅĞ¶ÏÊÇ²»ÊÇÕâĞ©Óï¾ä±ÈÈç for if while ¶¨Òå ·µ»Ø
 int isin_first_instmt_sequence()
 {
     tokentype first_instmt[20]= {FOR,WHILE,IF,INT,FLOAT,
@@ -411,44 +411,44 @@ int isin_first_instmt_sequence()
 }
 
 
-/**FOR IF WHILE å®šä¹‰ PRINTF SCANFè¯­å¥ RETURN ç­‰ç­‰**/
+/**FOR IF WHILE ¶¨Òå PRINTF SCANFÓï¾ä RETURN µÈµÈ**/
 treenode *instmt_sequence()
 {
     treenode *t=NULL;
 
     switch (token)
     {
-        /**forå¾ªç¯ !!**/
+        /**forÑ­»· !!**/
         case FOR :
         {
             t=for_stmt();
             break;
         }
-            /**IFè¯­å¥ !!**/
+            /**IFÓï¾ä !!**/
         case IF :
         {
             t=if_stmt();
             break;
         }
-            /**whileè¯­å¥ !!**/
+            /**whileÓï¾ä !!**/
         case WHILE :
         {
             t=while_stmt();
             break;
         }
-            /**structè¯­å¥ !!**/
+            /**structÓï¾ä !!**/
         case SWITCH:
         {
             t=switch_stmt();
             break;
         }
-            /**caseè¯­å¥ !!**/
+            /**caseÓï¾ä !!**/
         case CASE:
         {
             t=case_stmt();
             break;
         }
-            /**caseè¯­å¥ !!**/
+            /**caseÓï¾ä !!**/
         case BREAK:
         {
             t=break_stmt();
@@ -461,10 +461,10 @@ treenode *instmt_sequence()
         }
         default:
         {
-            t=statement(); ///  æ™®é€šè¯­å¥æœ‰å¾ˆå¤š--å‡½æ•°è°ƒç”¨ï¼Œå®šä¹‰ï¼Œèµ‹å€¼ returnç­‰ç­‰
+            t=statement(); ///  ÆÕÍ¨Óï¾äÓĞºÜ¶à--º¯Êıµ÷ÓÃ£¬¶¨Òå£¬¸³Öµ returnµÈµÈ
             if(token!=FENH)
             {
-                printf("missing ';' %d ",count_row());///å¦‚æœä¸ºå®šä¹‰è¯­å¥ï¼›æ‰“å°ï¼›è¾“å…¥è¯­å¥ï¼Œåˆ™åé¢åˆ¤æ–­æœ‰æ²¡æœ‰åˆ†å·
+                printf("missing ';' %d ",count_row());///Èç¹ûÎª¶¨ÒåÓï¾ä£»´òÓ¡£»ÊäÈëÓï¾ä£¬ÔòºóÃæÅĞ¶ÏÓĞÃ»ÓĞ·ÖºÅ
             }
             else
             {
@@ -477,7 +477,7 @@ treenode *instmt_sequence()
 }
 
 
-///forè¯­å¥
+///forÓï¾ä
 treenode *for_stmt()
 {
     treenode *t=NULL;
@@ -505,7 +505,7 @@ treenode *for_stmt()
     {
         if(token_table[ptokenno].tokenval==EQUAL)
         {
-            printf("warning!! ä¸èƒ½ä¸ºèµ‹å€¼ç­‰å¼");
+            printf("warning!! ²»ÄÜÎª¸³ÖµµÈÊ½");
         }
         else
         {
@@ -575,7 +575,7 @@ treenode *BUER_stmt()
         t=exp2();
     }
 }
-///ä¸»è¦ç”¨äºFOR ,IF while ,ä½ ä¸çŸ¥é“æ˜¯èµ‹å€¼è¿˜æ˜¯å…³ç³»è¿ç®—ã€‚
+///Ö÷ÒªÓÃÓÚFOR ,IF while ,Äã²»ÖªµÀÊÇ¸³Öµ»¹ÊÇ¹ØÏµÔËËã¡£
 treenode *exp2()
 {
     treenode *t;
@@ -591,7 +591,7 @@ treenode *exp2()
 }
 
 /***********************************************************
- * åŠŸèƒ½:	whileè¯­å¥
+ * ¹¦ÄÜ:	whileÓï¾ä
  **********************************************************/
 treenode *while_stmt()
 {
@@ -602,10 +602,10 @@ treenode *while_stmt()
     match(R_XI);
     if(token==L_DA)
         t->child[1]=structure_stmt();
-    return t;///!!!è¿™ä¸ªbug æ‰¾äº†å¥½ä¹…å‘€ï¼ï¼ï¼
+    return t;///!!!Õâ¸öbug ÕÒÁËºÃ¾ÃÑ½£¡£¡£¡
 }
 /***********************************************************
- * åŠŸèƒ½:	switchè¯­å¥
+ * ¹¦ÄÜ:	switchÓï¾ä
  **********************************************************/
 treenode *switch_stmt()
 {
@@ -620,7 +620,7 @@ treenode *switch_stmt()
     }
     return t;
 }
-///ç”¨äºcaseè¯­å¥æ®µ
+///ÓÃÓÚcaseÓï¾ä¶Î
 treenode *case_stmt()
 {
     treenode *t=newlnodestmt(casek);
@@ -635,7 +635,7 @@ treenode *case_stmt()
     }
     return t;
 }
-///ç”¨äºbreakè¯­å¥
+///ÓÃÓÚbreakÓï¾ä
 treenode *break_stmt()
 {
     treenode *t=newlnodestmt(breakk);
@@ -643,7 +643,7 @@ treenode *break_stmt()
     match(FENH);
     return t;
 }
-///ç”¨äºdefaultè¯­å¥
+///ÓÃÓÚdefaultÓï¾ä
 treenode *default_stmt()
 {
     treenode *t=newlnodestmt(defaultk);
@@ -658,7 +658,7 @@ treenode *default_stmt()
 treenode *statement()
 {
     treenode *t=NULL;
-    /**å¦‚æœæ˜¯dtypeï¼Œåˆ™ä¸ºå®šä¹‰è¯­å¥**/
+    /**Èç¹ûÊÇdtype£¬ÔòÎª¶¨ÒåÓï¾ä**/
     if(isdtype())
     {
         t=definepara_stmt();
@@ -673,23 +673,23 @@ treenode *statement()
     {
         t=definepara_stmt();
     }
-    else if(token==ID)  /**å‡½æ•°è°ƒç”¨,æ•°ç»„å®šä¹‰ï¼Œå˜é‡çš„èµ‹å€¼**/
+    else if(token==ID)  /**º¯Êıµ÷ÓÃ,Êı×é¶¨Òå£¬±äÁ¿µÄ¸³Öµ**/
     {
         int tag_array=array_judge(ptokenno);
 
         if(token_table[ptokenno].tokenval==EQUAL||tag_array==1)
         {
-            t=assign_stmt();///æ•°ç»„æˆ–å˜é‡èµ‹å€¼(å˜é‡å¯èƒ½ä¸ºå‡½æ•°è°ƒç”¨çš„ç»“æœ)
+            t=assign_stmt();///Êı×é»ò±äÁ¿¸³Öµ(±äÁ¿¿ÉÄÜÎªº¯Êıµ÷ÓÃµÄ½á¹û)
         }
         else if(token_table[ptokenno].tokenval==L_XI)
         {
-            t=fun_apply();  /// å‡½æ•°è°ƒç”¨
+            t=fun_apply();  /// º¯Êıµ÷ÓÃ
         }
         else if(token_table[ptokenno].tokenval==DIAN&&token_table[ptokenno+2].tokenval==EQUAL)
         {
             t=assign_stmt();
         }
-        else ///if()å¾…å†™  æ„Ÿè§‰ä¸ç”¨æ¡ä»¶
+        else ///if()´ıĞ´  ¸Ğ¾õ²»ÓÃÌõ¼ş
         {
             t=exp();
         }
@@ -698,7 +698,7 @@ treenode *statement()
     return t;
 }
 /***********************************************************
- * åŠŸèƒ½:	å‡½æ•°è°ƒç”¨  fun(a,b)
+ * ¹¦ÄÜ:	º¯Êıµ÷ÓÃ  fun(a,b)
  **********************************************************/
 treenode *fun_apply()
 {
@@ -714,7 +714,7 @@ treenode *fun_apply()
     return t;
 }
 
-///å‚æ•°åˆ—è¡¨ æœåŠ¡äºå‡½æ•°è°ƒç”¨é‡Œçš„å‚æ•° æ¯”å¦‚fun(1,2)
+///²ÎÊıÁĞ±í ·şÎñÓÚº¯Êıµ÷ÓÃÀïµÄ²ÎÊı ±ÈÈçfun(1,2)
 treenode *input_para_list()
 {
     treenode *t;
@@ -734,7 +734,7 @@ int array_judge(int p)
     if(token_table[p].tokenval==L_ZH)
     {
         int i;
-        for(i=p+1; i<1000; i++) ///æœ‰bugï¼ï¼ã€‚ã€‚ã€‚
+        for(i=p+1; i<1000; i++) ///ÓĞbug£¡£¡¡£¡£¡£
         {
             if(token_table[i].tokenval==R_ZH)
             {
@@ -746,7 +746,7 @@ int array_judge(int p)
     return -1;
 }
 
-/**åˆ¤æ–­å½“å‰è®°å·æ˜¯å¦æ˜¯å˜é‡æˆ–å‡½æ•°è¿”å›å€¼ï¼ˆé™¤VOIDä»¥å¤–ï¼‰**/
+/**ÅĞ¶Ïµ±Ç°¼ÇºÅÊÇ·ñÊÇ±äÁ¿»òº¯Êı·µ»ØÖµ£¨³ıVOIDÒÔÍâ£©**/
 int isdtype()
 {
     int i=0;
@@ -759,7 +759,7 @@ int isdtype()
 }
 
 
-/**å®šä¹‰è¯­å¥**/
+/**¶¨ÒåÓï¾ä**/
 treenode *definepara_stmt()
 {
     treenode *t=NULL;
@@ -772,7 +772,7 @@ treenode *definepara_stmt()
     else if(token==STRUCT)
     {
         match(token);
-        match(ID);  ///æŠŠæ•´ä¸ªstruct XX matchæ‰
+        match(ID);  ///°ÑÕû¸östruct XX matchµô
     }
 
     else
@@ -783,7 +783,7 @@ treenode *definepara_stmt()
 }
 
 
-/**å˜é‡èµ‹å€¼å®šä¹‰  æ•°ç»„çš„å®šä¹‰,åˆå§‹åŒ–ï¼Œåˆå§‹åŒ–å’Œå®šä¹‰çš„åŒæ—¶è¿›è¡Œ**/
+/**±äÁ¿¸³Öµ¶¨Òå  Êı×éµÄ¶¨Òå,³õÊ¼»¯£¬³õÊ¼»¯ºÍ¶¨ÒåµÄÍ¬Ê±½øĞĞ**/
 treenode *define_assign()
 {
     treenode *t=NULL;
@@ -800,7 +800,7 @@ treenode *define_assign()
         //match(FENH);
         return t=newtemp;
     }
-    /**æ”¯æŒå˜é‡å®šä¹‰åˆå§‹åŒ–ï¼Œè¿ç»­å®šä¹‰ç­‰**/
+    /**Ö§³Ö±äÁ¿¶¨Òå³õÊ¼»¯£¬Á¬Ğø¶¨ÒåµÈ**/
     while (token_table[ptokenno].tokenval == EQUAL || token_table[ptokenno].tokenval == DOUH
            || token_table[ptokenno].tokenval == FENH||token_table[ptokenno].tokenval==L_ZH)
 
@@ -808,7 +808,7 @@ treenode *define_assign()
         switch (token_table[ptokenno].tokenval)
         {
 
-            case EQUAL:  /**èµ‹å€¼è¯­å¥**/
+            case EQUAL:  /**¸³ÖµÓï¾ä**/
             {
                 k++;
                 newtemp=assign_stmt();
@@ -861,7 +861,7 @@ treenode *define_assign()
                 }
                 break;
             }
-            case L_ZH:  ///æ•°ç»„éƒ¨åˆ†ï¼ï¼
+            case L_ZH:  ///Êı×é²¿·Ö£¡£¡
             {
                 k++;
 
@@ -871,9 +871,9 @@ treenode *define_assign()
                 newtemp->child[0]=t1;
 
                 match(L_ZH);
-                if(token!=NUM&&token!=R_ZH)  ///ä¸€äº›è¯­ä¹‰åˆ†æ
+                if(token!=NUM&&token!=R_ZH)  ///Ò»Ğ©ÓïÒå·ÖÎö
                 {
-                    printf("error!!æ•°ç»„å®šä¹‰æœ‰è¯¯");
+                    printf("error!!Êı×é¶¨ÒåÓĞÎó");
                 }
                 if(token==NUM)
                 {
@@ -907,21 +907,21 @@ treenode *define_assign()
 }
 
 
-/**èµ‹å€¼è¯­å¥  æ•°ç»„çš„èµ‹å€¼åæœŸåŠ è¿›æ¥ï¼ï¼ï¼ï¼**/
+/**¸³ÖµÓï¾ä  Êı×éµÄ¸³ÖµºóÆÚ¼Ó½øÀ´£¡£¡£¡£¡**/
 treenode *assign_stmt()
 {
     treenode *t1;
-    if(token_table[ptokenno].tokenval==L_ZH) ///æ•°ç»„èµ‹å€¼  å½¢å¦‚a[1] a[2]
+    if(token_table[ptokenno].tokenval==L_ZH) ///Êı×é¸³Öµ  ĞÎÈça[1] a[2]
     {
         t1=newlnodeexp(cite_arrayk);
         treenode *t2=newlnodeexp(idk);
         match(ID);
         t1->child[0]=t2;
         match(L_ZH);
-        t1->child[1]=exp2(); ///ç›´æ¥æ˜¯factoré‡Œçš„æ•°å­—ç»“æ„äº†ï¼›
+        t1->child[1]=exp2(); ///Ö±½ÓÊÇfactorÀïµÄÊı×Ö½á¹¹ÁË£»
         match(R_ZH);
     }
-    else if(token_table[ptokenno].tokenval==DIAN)  ///ä¸ºstructç»“æ„ä¸“é—¨å®šä¹‰
+    else if(token_table[ptokenno].tokenval==DIAN)  ///Îªstruct½á¹¹×¨ÃÅ¶¨Òå
     {
         t1 = newlnodeexp(idk);
         match(ID);
@@ -933,7 +933,7 @@ treenode *assign_stmt()
         t1=newlnodeexp(idk);
         match(ID);
     }
-    match(EQUAL);///ä¸éœ€è¦å°†=åŒ¹é…æˆop
+    match(EQUAL);///²»ĞèÒª½«=Æ¥Åä³Éop
 
     ///opk=EQUAL
     treenode *t=newlnodestmt(assignk);
@@ -950,7 +950,7 @@ treenode *exp()
     treenode *temp;
 
     temp=simple_exp();
-    ///ç®€å•è¡¨è¾¾å¼
+    ///¼òµ¥±í´ïÊ½
     if(iscomparison_op())
     {
         t=newlnodeexp(opk);
@@ -980,10 +980,10 @@ int iscomparison_op()
             return 1;
         }
     }
-    return 0;///æ²¡æœ‰åŒ¹é…ä¸Š
+    return 0;///Ã»ÓĞÆ¥ÅäÉÏ
 }
 
-///ç®€å•è¡¨è¾¾å¼ åŠ å‡
+///¼òµ¥±í´ïÊ½ ¼Ó¼õ
 treenode *simple_exp()
 {
     treenode *t=NULL;
@@ -992,12 +992,12 @@ treenode *simple_exp()
 
     temp=term();
 
-    ///åŠ æ³•æˆ–å‡æ³•è¯­å¥
+    ///¼Ó·¨»ò¼õ·¨Óï¾ä
     while(token==PLUS||token==MINUS)
     {
         newtemp=newlnodeexp(opk);
         match(token);
-        ///å­èŠ‚ç‚¹åˆ†åˆ«ä¸ºå·¦å³ä¸¤ä¸ªterm
+        ///×Ó½Úµã·Ö±ğÎª×óÓÒÁ½¸öterm
         newtemp->child[0]=temp;
         newtemp->child[1]=term();
         temp=newtemp;
@@ -1006,7 +1006,7 @@ treenode *simple_exp()
     return t;
 }
 
-///ä¸»è¦æ˜¯ä¹˜é™¤
+///Ö÷ÒªÊÇ³Ë³ı
 treenode *term()
 {
     treenode *t=NULL;
@@ -1027,13 +1027,13 @@ treenode *term()
     return t=temp;
 }
 
-///æœ€åŸºæœ¬çš„å•æ¨¡å—
+///×î»ù±¾µÄµ¥Ä£¿é
 treenode *factor()
 {
     treenode *t=NULL;
     switch (token)
     {
-        ///å¸¦æ‹¬å·çš„è¡¨è¾¾å¼
+        ///´øÀ¨ºÅµÄ±í´ïÊ½
         case L_XI:
         {
             match(L_XI);
@@ -1042,25 +1042,25 @@ treenode *factor()
             break;
         }
 
-            ///å˜é‡---å¯èƒ½ä¸ºå‡½æ•°è°ƒç”¨è¯­å¥ï¼Œå¯èƒ½ä¸ºæ•°ç»„ï¼Œå¯èƒ½ä¸ºæ™®é€šå˜é‡
+            ///±äÁ¿---¿ÉÄÜÎªº¯Êıµ÷ÓÃÓï¾ä£¬¿ÉÄÜÎªÊı×é£¬¿ÉÄÜÎªÆÕÍ¨±äÁ¿
         case ID:
         {
-            if(token_table[ptokenno].tokenval==L_XI)  ///å‡½æ•°è°ƒç”¨
+            if(token_table[ptokenno].tokenval==L_XI)  ///º¯Êıµ÷ÓÃ
             {
                 t=fun_apply();
             }
-            else if(token_table[ptokenno].tokenval==L_ZH) ///æ•°ç»„
+            else if(token_table[ptokenno].tokenval==L_ZH) ///Êı×é
             {
                 t=newlnodeexp(cite_arrayk);
                 treenode *temp1=newlnodeexp(idk);
                 match(ID);
                 match(L_ZH);
-                treenode *temp2=exp2() ;  ///å¯ç¼©å°èŒƒå›´factor å³å¯;
+                treenode *temp2=exp2() ;  ///¿ÉËõĞ¡·¶Î§factor ¼´¿É;
                 t->child[0]=temp1;
                 t->child[1]=temp2;
                 match(L_ZH);
             }
-            else   ///æ™®é€šå˜é‡
+            else   ///ÆÕÍ¨±äÁ¿
             {
                 t = newlnodeexp(idk);
                 match(ID);
@@ -1068,7 +1068,7 @@ treenode *factor()
             break;
         }
 
-            ///æ•°å­—
+            ///Êı×Ö
         case NUM:
         {
             t=newlnodeexp(constk);
@@ -1081,7 +1081,7 @@ treenode *factor()
 }
 
 
-/** ** **** **** *****   *******       è¾“å‡ºæŠ½è±¡è¯­æ³•æ ‘çš„è¿‡ç¨‹  *******   *****  ******   *****/
+/** ** **** **** *****   *******       Êä³ö³éÏóÓï·¨Ê÷µÄ¹ı³Ì  *******   *****  ******   *****/
 
 void parse_printtree()
 {
@@ -1090,7 +1090,7 @@ void parse_printtree()
 }
 
 
-///æ ‘
+///Ê÷
 void printtree(treenode *lnode)
 {
     int i;
@@ -1117,10 +1117,10 @@ void printtree(treenode *lnode)
         printtree(lnode);
     }
 }
-///æ‰“å°ç»“ç‚¹
+///´òÓ¡½áµã
 void printnode(treenode *lnode)
 {
-    if(lnode->nodekind==expk) ///è¡¨è¾¾å¼ç»“ç‚¹
+    if(lnode->nodekind==expk) ///±í´ïÊ½½áµã
     {
 
         switch (lnode->kind.exp)
@@ -1133,7 +1133,7 @@ void printnode(treenode *lnode)
             case opk:
             {
                 token=lnode->attr.op;
-                printf("op=  [%s]",tokenstring());///tokenstring()ä¸éœ€è¦å‚æ•°
+                printf("op=  [%s]",tokenstring());///tokenstring()²»ĞèÒª²ÎÊı
                 break;
             }
             case constk:
@@ -1149,7 +1149,7 @@ void printnode(treenode *lnode)
 
         }
     }
-    else if(lnode->nodekind==stmtk) ///stmtk  //å‡½æ•°ç»“ç‚¹
+    else if(lnode->nodekind==stmtk) ///stmtk  //º¯Êı½áµã
     {
         switch(lnode->kind.stmt)
         {
@@ -1243,6 +1243,6 @@ void printnode(treenode *lnode)
     }
     else
     {
-        printf("èŠ‚ç‚¹æœ‰è¯¯ï¼ï¼");
+        printf("½ÚµãÓĞÎó£¡£¡");
     }
 }

@@ -32,5 +32,7 @@ extern int line_num_table[1000];
 extern int lineno;
 extern int tokenno;
 extern tokentype token;
+extern char* tokenstring();
 
+void parse();                                   ///语法分析开始
 #endif //COMPILER_PARSE_H

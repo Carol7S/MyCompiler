@@ -14,7 +14,11 @@ stdlib.h
 string.h
 -
 
-H:/code/code/c/clion/compiler/main.c
+H:/code/code/c/clion/compiler/scan.c
+scan.h
+H:/code/code/c/clion/compiler/scan.h
+
+H:/code/code/c/clion/compiler/scan.h
 global.h
 H:/code/code/c/clion/compiler/global.h
 

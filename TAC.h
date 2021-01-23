@@ -35,4 +35,6 @@ typedef struct fourvarcode
 extern treenode *tree_gen;
 extern tokentype token;
 extern char* tokenstring();
+
+void tac();
 #endif //COMPILER_TAC_H
