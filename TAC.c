@@ -1,6 +1,3 @@
-//
-// Created by Carol on 2021/1/23.
-//
 #include"global.h"
 #include"TAC.h"
 char *opkinds_string(opkinds op);///这个在优化还要用，所以不能私有化
@@ -14,8 +11,8 @@ static void IF_K(treenode *lnode);          ///处理if结点
 static void WHILE_K(treenode *lnode);       ///处理while结点
 static void FOR_K(treenode *lnode);         ///处理for结点
 static void FUNC_K(treenode *lnode);        ///处理函数调用结点
-int count_para(treenode *lnode);
 static void get_tac(opkinds op,char a[],char b[],char c[]); ///产生四元式
+int count_para(treenode *lnode);
 void print_tac();
 static char * newlabel();     ///申请跳转label
 static char * newtemp();      ///申请个临时寄存器
@@ -25,20 +22,26 @@ static int newtemp_no=0;    ///中间变量的寄存器的计数器
 static int newlabel_no=0;  ///跳转标志的计数器
 static char adr[10]= {'\0'};
 static char empty[10]= "\0";
+char s[10];
 
-void tac()
+void  tac()
 {
     tac_head=(fourvarcode*)malloc(sizeof(fourvarcode));
     tac_temp=tac_head;
     treenode *lnode=tree_gen;
+
     start_tac(lnode);
+    printf("success1\n");
     print_tac();
 }
 
+
 void start_tac(treenode* lnode)
 {
+    printf("123\n");
     while(lnode!=NULL)
     {
+        printf("321\n");
         if(lnode->nodekind==stmtk) ///是语句节点(比如：if while main  等等)
         {
             if(lnode->kind.stmt==maink)
@@ -82,6 +85,7 @@ void start_tac(treenode* lnode)
 ///处理main节点
 void MAIN_K(treenode *lnode)
 {
+
     char a[10];
     a[0]='0';
     a[1]='\0';
@@ -138,6 +142,7 @@ void DEFINEPARA_K(treenode *lnode)
     }
 }
 
+
 ///处理赋值节点
 void ASSIGN_K(treenode *lnode)
 {
@@ -149,12 +154,6 @@ void ASSIGN_K(treenode *lnode)
     {
         get_tac(asns,t1,lnode->child[0]->attr.name,adr); ///将值给id
     }
-    /* else ///if(lnode->child[0]->kind.exp==cite_arrayk 是数组的话--
-     {
-         char t3[10];
-         strcpy(t3,deal_expk(lnode->child[0]));
-         get_tac(asns,t1,t3,adr);
-     }*/
 }
 
 ///处理return节点
@@ -348,7 +347,7 @@ void get_tac(opkinds op,char a[],char b[],char c[])
         t->addr1.kind=emptys;
         strcpy(t->addr1.name,"\0");
     }
-    else if((a[0]>='a' && a[0]<='z') || (a[0]>='A' && a[0]<='Z'))
+    else if((a[0]>='a'&&a[0]<='z')||(a[0]>='A'&&a[0]<='Z'))
     {
         t->addr1.kind=strings;
         strcpy(t->addr1.name,a);
@@ -399,10 +398,12 @@ void get_tac(opkinds op,char a[],char b[],char c[])
            printf("_ ,");
        else
            printf("%s ,",t->addr1.name);
+
        if(t->addr2.kind==emptys)
            printf("_ ,");
        else
            printf("%s ,",t->addr2.name);
+
        if(t->addr3.kind==emptys)
            printf("_ ,");
        else
@@ -418,7 +419,6 @@ void get_tac(opkinds op,char a[],char b[],char c[])
 ///中间变量，在汇编中是存在寄存器中
 char *newtemp()
 {
-    char s[10];
     sprintf(s,"t#%d",newtemp_no);
     newtemp_no++;
     return s;
@@ -426,7 +426,6 @@ char *newtemp()
 
 char* deal_expk(treenode *lnode)///专门处理expk的式子
 {
-    char empty[10];
     empty[0]='\0';
     while(lnode!=NULL)
     {
@@ -434,7 +433,7 @@ char* deal_expk(treenode *lnode)///专门处理expk的式子
         {
             case opk:
             {
-                char t2[10],t3[10],t4[10],a[10],b[10];
+                static char t2[10],t3[10],t4[10],a[10],b[10];
                 strcpy(t2,newtemp());
                 strcpy(t3,newtemp());
 
@@ -564,7 +563,7 @@ char* deal_expk(treenode *lnode)///专门处理expk的式子
             }
             case constk:///为常量
             {
-                char t6[10];
+                static char t6[10];
                 sprintf(t6,"%g",lnode->attr.val);
                 return t6;
             }
@@ -615,7 +614,7 @@ char* deal_expk(treenode *lnode)///专门处理expk的式子
 }
 char *newlabel()
 {
-    char s[10];
+    static char s[10];
     sprintf(s,"L%d",newlabel_no);
     newlabel_no++;
     return s;
@@ -632,6 +631,7 @@ int count_para(treenode *lnode)
     }
     return count;
 }
+
 
 
 /*************************输出四元式*************************/
@@ -671,9 +671,6 @@ void print_tac()
         }
     }
 }
-
-
-
 
 ///转换为字符型，符号表
 char *opkinds_string(opkinds op)

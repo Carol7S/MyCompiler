@@ -10,7 +10,9 @@ int main() {
     printf("\n\n>>> ast     =====================================\n");
     parse();
     printf("\n\n>>> tac     =====================================\n");
+    printf("success3\n");
     tac();
+    printf("success4\n");
     printf("\n\n>>>after optimize     =====================================\n");
     printf("\nafter optimize\n\n");
     start_optimize();
