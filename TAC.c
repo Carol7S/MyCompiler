@@ -31,7 +31,6 @@ void  tac()
     treenode *lnode=tree_gen;
 
     start_tac(lnode);
-    printf("success1\n");
     print_tac();
 }
 
@@ -390,25 +389,6 @@ void get_tac(opkinds op,char a[],char b[],char c[])
         strcpy(t->addr3.name,c);
     }
 
-    /*printf("(");
-       printf("%s ,",opkinds_string(t->op));
-       if(t->addr1.kind==emptys)
-           printf("_ ,");
-       else
-           printf("%s ,",t->addr1.name);
-
-       if(t->addr2.kind==emptys)
-           printf("_ ,");
-       else
-           printf("%s ,",t->addr2.name);
-
-       if(t->addr3.kind==emptys)
-           printf("_ ,");
-       else
-           printf("%s ,",t->addr3.name);
-       printf(")");
-       printf("\n");
-   */
     t->next=NULL;
     tac_temp->next=t;
     tac_temp=t;

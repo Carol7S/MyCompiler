@@ -58,7 +58,7 @@ void scan(){
     {
         while(!feof(text))                                  /**文件直到循环中读到文件尾feof(fp)有两个返回值:如果遇到文件结束，函数feof（fp）的值为1，否则为0。**/
         {
-            printf("yes");
+            //printf("yes");
             currentchar=0;                                  /**每读完一行重新清零**/
             get_nextline(text);                               /**获取每一行，并放在linebuf中，以'/0'结束**/
             lineno++;
@@ -261,8 +261,8 @@ static void get_token(){
                 }
                 case 5:  /**如果是保留字，则保存保留字，若不是，则保存变量**/
                 {
-                    printf("%s",returnstring(ncurrentchar,currentchar-1));
-                    printf("%s",token_table[tokenno].stringval);
+                    //printf("%s",returnstring(ncurrentchar,currentchar-1));
+                    //printf("%s",token_table[tokenno].stringval);
                     strcpy(token_table[tokenno].stringval,returnstring(ncurrentchar,currentchar-1));
                     if(is_keywords(token_table[tokenno].stringval))
                     {
@@ -592,7 +592,6 @@ char* tokenstring(){
 **********************************************************/
 static void print_token(){
     int i;
-    //printf("tokenno=%d\n",tokenno);
     int j;
     for(j=1;line_num_table[j]!=0;j++)
     {
